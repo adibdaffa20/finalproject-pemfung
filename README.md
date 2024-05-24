@@ -1,50 +1,42 @@
-# Welcome to your Expo app 👋
+# Konfigurasi Backend
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Ikuti langkah-langkah berikut untuk mengatur dan menjalankan server backend:
 
-## Get started
+## 1. Membuat Virtual Environment
 
-1. Install dependencies
+Buat virtual environment untuk mengisolasi dependensi proyek Anda.
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```sh
+python -m venv venv
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 2. Instal Dependensi
 
-## Learn more
+Aktifkan virtual environment Anda dan instal semua paket yang diperlukan dari `requirements.txt`.
 
-To learn more about developing your project with Expo, look at the following resources:
+```sh
+source venv/bin/activate  # Pada Windows gunakan `venv\Scripts\activate`
+pip install -r requirements.txt
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## 3. Konfigurasi Database
 
-## Join the community
+Atur konfigurasi database Anda di `config.py`. Pastikan semua pengaturan yang diperlukan (seperti URI database) telah ditentukan dengan benar.
 
-Join our community of developers creating universal apps.
+## 4. Migrasi Database
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Inisialisasi dan migrasikan database menggunakan Flask-Migrate.
+
+```sh
+flask db init
+flask db migrate -m "Initial migration."
+flask db upgrade
+```
+
+## 5. Menjalankan Aplikasi Flask
+
+Mulai server pengembangan Flask.
+
+```sh
+flask run
+```
