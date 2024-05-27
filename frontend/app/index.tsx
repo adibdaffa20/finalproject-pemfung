@@ -59,7 +59,7 @@ const App: React.FC = () => {
                             paddingVertical: 6,
                             flexDirection: "row",
                             justifyContent: "space-between",
-                            backgroundColor: colors.greyish,
+                            backgroundColor: colors.brdcolor,
                             borderRadius: 20,
                             marginVertical: 20,
                             alignItems: "center"
@@ -97,9 +97,36 @@ const App: React.FC = () => {
                             {"Dosen"}
                         </Text>
                         <View style={styles.circleContainer}>
-                            {[...Array(5)].map((_, index) => (
-                                <View key={index} style={styles.circle} />
-                            ))}
+                            <View style={styles.circle}>
+                                <Image 
+                                    source={{ uri: 'https://bif-sby.telkomuniversity.ac.id/wp-content/uploads/2023/11/daud-scaled-e1699956085516.jpg' }} 
+                                    style={styles.circleImage} 
+                                />
+                            </View>
+                            <View style={styles.circle}>
+                                <Image 
+                                    source={{ uri: 'https://bif-sby.telkomuniversity.ac.id/wp-content/uploads/2023/11/Alqis-scaled-e1699955140889.jpg' }} 
+                                    style={styles.circleImage} 
+                                />
+                            </View>
+                            <View style={styles.circle}>
+                                <Image 
+                                    source={{ uri: 'https://bif-sby.telkomuniversity.ac.id/wp-content/uploads/2021/05/dzulll.jpg' }} 
+                                    style={styles.circleImage} 
+                                />
+                            </View>
+                            <View style={styles.circle}>
+                                <Image 
+                                    source={{ uri: 'https://bif-sby.telkomuniversity.ac.id/wp-content/uploads/2021/05/khar.jpg' }} 
+                                    style={styles.circleImage} 
+                                />
+                            </View>
+                            <View style={styles.circle}>
+                                <Image 
+                                    source={{ uri: 'https://bif-sby.telkomuniversity.ac.id/wp-content/uploads/2021/05/al.jpg' }} 
+                                    style={styles.circleImage} 
+                                />
+                            </View>
                         </View>
                     </View>
                     <View style={{ marginTop: 20 }}>
@@ -108,25 +135,30 @@ const App: React.FC = () => {
                         </Text>
                         <View style={styles.categoryContainer}>
                             <TouchableOpacity onPress={() => handleCategoryPress("All")}>
-                                <View style={[styles.category, allSelected && styles.selectedCategory]}>
+                                <View style={[styles.category, allSelected && styles.selectedCategory, styles.categoryWithBorder]}>
                                     <Text style={[styles.categoryText, allSelected && styles.selectedCategoryText]}>All</Text>
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => handleCategoryPress("UI/UX")}>
-                                <View style={styles.category}>
+                                <View style={[styles.category, styles.categoryWithBorder]}>
                                     <Text style={styles.categoryText}>UI/UX</Text>
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => handleCategoryPress("Apple Dev")}>
-                                <View style={styles.category}>
+                                <View style={[styles.category, styles.categoryWithBorder]}>
                                     <Text style={styles.categoryText}>Apple Dev</Text>
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => handleCategoryPress("Web Dev")}>
-                                <View style={styles.category}>
+                                <View style={[styles.category, styles.categoryWithBorder]}>
                                     <Text style={styles.categoryText}>Web Dev</Text>
                                 </View>
                             </TouchableOpacity>
+                            {/* <TouchableOpacity onPress={() => handleCategoryPress("Data Science")}>
+                                <View style={[styles.category, styles.categoryWithBorder]}>
+                                    <Text style={styles.categoryText}>Data Science</Text>
+                                </View>
+                            </TouchableOpacity> */}
                         </View>
                         <View style={styles.frameContainer}>
                             <TouchableOpacity onPress={() => handleFramePress("UI/UX")}>
@@ -205,15 +237,23 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         marginTop: 5
+   
+
     },
     circle: {
         width: 62,
         height: 62,
-        borderRadius: 30,
+        borderRadius: 31,
         backgroundColor: colors.tint,
         justifyContent: 'center',
         alignItems: 'center',
-        marginHorizontal: 8
+        marginHorizontal: 8,
+        overflow: 'hidden' // Ensure the image is contained within the circle
+    },
+    circleImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 31, // Match the border radius of the circle
     },
     categoryContainer: {
         flexDirection: 'row',
@@ -229,11 +269,16 @@ const styles = StyleSheet.create({
         marginRight: 10
     },
     selectedCategory: {
-        backgroundColor: colors.tint, // Blue color when selected
+        backgroundColor: colors.tint, // Blue
+
+    },
+    categoryWithBorder: {
+        borderWidth: 2,
+        borderColor: colors.tint,
     },
     categoryText: {
         color: colors.white,
-        fontWeight: 'bold',
+        // fontWeight: 'bold',
         fontSize: 16,
     },
     selectedCategoryText: {
