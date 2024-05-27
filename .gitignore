@@ -48,7 +48,6 @@ yarn.lock
 
 # Ignore specific configuration files
 expo-env.d.ts
-config.py
 
 # Ignore compiled code and static files
 static/
