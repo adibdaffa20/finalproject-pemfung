@@ -10,31 +10,28 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/native-stack';
-import { useSession } from '../SessionContext';
 import { RootStackParamList } from '../AppNavigator';
 
-type LoginScreenNavigationProp = StackNavigationProp<
+type SignUpScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  'Login'
+  'SignUp'
 >;
 
 type Props = {
-  navigation: LoginScreenNavigationProp;
+  navigation: SignUpScreenNavigationProp;
 };
 
-interface LoginResponse {
+interface SignUpResponse {
   message?: string;
   error?: string;
 }
 
-const Login: React.FC<Props> = ({ navigation }) => {
+const SignUp: React.FC<Props> = ({ navigation }) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { login } = useSession();
-
-  const handleLogin = async () => {
+  const handleSignUp = async () => {
     if (!username || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
@@ -42,22 +39,22 @@ const Login: React.FC<Props> = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/login', {
+      const response = await fetch('http://127.0.0.1:5000/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username, password }),
       });
-      const json = (await response.json()) as LoginResponse;
+      const json = (await response.json()) as SignUpResponse;
       if (response.status === 200) {
-        login(username);
-        navigation.replace('HomeTabs');
+        Alert.alert('Success', json.message || 'Account created');
+        navigation.replace('Login');
       } else {
-        Alert.alert('Login Failed', json.error || 'Unknown error');
+        Alert.alert('Sign Up Failed', json.error || 'Unknown error');
       }
     } catch (error) {
-      Alert.alert('Login Failed', 'Unable to connect to server');
+      Alert.alert('Sign Up Failed', 'Unable to connect to server');
     } finally {
       setLoading(false);
     }
@@ -66,7 +63,7 @@ const Login: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/taskify.png')} style={styles.logo} />
-      <Text style={styles.title}>Welcome Back</Text>
+      <Text style={styles.title}>Create Your Account</Text>
       <TextInput
         style={styles.input}
         placeholder='Username'
@@ -81,17 +78,17 @@ const Login: React.FC<Props> = ({ navigation }) => {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+      <TouchableOpacity style={styles.button} onPress={handleSignUp} disabled={loading}>
         {loading ? (
           <ActivityIndicator color='#fff' />
         ) : (
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>Sign Up</Text>
         )}
       </TouchableOpacity>
       <Text style={styles.footerText}>
-        Don't have an account?{' '}
-        <Text style={styles.signUpText} onPress={() => navigation.replace('SignUp')}>
-          Sign Up
+        Already have an account?{' '}
+        <Text style={styles.loginText} onPress={() => navigation.replace('Login')}>
+          Log In
         </Text>
       </Text>
     </View>
@@ -144,10 +141,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 14,
   },
-  signUpText: {
+  loginText: {
     color: '#00008b',
     fontWeight: 'bold',
   },
 });
 
-export default Login;
+export default SignUp;
