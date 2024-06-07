@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -7,12 +7,12 @@ import {
   Alert,
   Image,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../AppNavigator';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../AppNavigator';
 
-type SignUpScreenNavigationProp = StackNavigationProp<
+type SignUpScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'SignUp'
 >;
@@ -26,35 +26,41 @@ interface SignUpResponse {
   error?: string;
 }
 
-const SignUp: React.FC<Props> = ({ navigation }) => {
+const SignUp: React.FC<Props> = ({navigation}) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [statusMessage, setStatusMessage] = useState<string>('');
 
   const handleSignUp = async () => {
     if (!username || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      setStatusMessage('Please fill in all fields'); // Set status message
       return;
     }
 
     setLoading(true);
+    setStatusMessage('');
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/signup', {
+      const response = await fetch('http://127.0.0.1:5000/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({username, password}),
       });
       const json = (await response.json()) as SignUpResponse;
-      if (response.status === 200) {
-        Alert.alert('Success', json.message || 'Account created');
-        navigation.replace('Login');
+      if (response.status === 200 || response.status === 201) {
+        setStatusMessage(
+          'Account successfully created. Redirecting to login...',
+        );
+        setUsername(''); // Reset username
+        setPassword(''); // Reset password
+        setTimeout(() => navigation.replace('Login'), 2000); // Wait 2 seconds, then navigate
       } else {
-        Alert.alert('Sign Up Failed', json.error || 'Unknown error');
+        setStatusMessage(json.error || 'Registration failed. Unknown error.');
       }
     } catch (error) {
-      Alert.alert('Sign Up Failed', 'Unable to connect to server');
+      setStatusMessage('Unable to connect to server');
     } finally {
       setLoading(false);
     }
@@ -63,6 +69,7 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/taskify.png')} style={styles.logo} />
+      <Text style={styles.statusMessage}>{statusMessage}</Text>{' '}
       <Text style={styles.title}>Create Your Account</Text>
       <TextInput
         style={styles.input}
@@ -78,7 +85,11 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <TouchableOpacity style={styles.button} onPress={handleSignUp} disabled={loading}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSignUp}
+        disabled={loading}
+      >
         {loading ? (
           <ActivityIndicator color='#fff' />
         ) : (
@@ -87,7 +98,10 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
       </TouchableOpacity>
       <Text style={styles.footerText}>
         Already have an account?{' '}
-        <Text style={styles.loginText} onPress={() => navigation.replace('Login')}>
+        <Text
+          style={styles.loginText}
+          onPress={() => navigation.replace('Login')}
+        >
           Log In
         </Text>
       </Text>
@@ -96,6 +110,12 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  statusMessage: {
+    fontSize: 16,
+    color: 'red', // Choose a color that suits your UI theme
+    textAlign: 'center',
+    paddingVertical: 10,
+  },
   container: {
     flex: 1,
     alignItems: 'center',
@@ -111,7 +131,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: "#00008b"
+    color: '#00008b',
   },
   input: {
     width: '80%',

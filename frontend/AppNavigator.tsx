@@ -1,16 +1,16 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { NavigationContainer } from '@react-navigation/native';
-import { SessionProvider } from './SessionContext';
+import {MaterialCommunityIcons} from '@expo/vector-icons';
+import {NavigationContainer} from '@react-navigation/native';
+import {SessionProvider} from './SessionContext';
 
-type RootStackParamList = {
+export type RootStackParamList = {
   Login: undefined;
   SignUp: undefined;
   HomeTabs: undefined;
@@ -27,8 +27,8 @@ const Tab = createBottomTabNavigator<HomeTabParamList>();
 
 const HomeTabs: React.FC = () => (
   <Tab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
+    screenOptions={({route}) => ({
+      tabBarIcon: ({focused, color, size}) => {
         let iconName;
         if (route.name === 'Home') {
           iconName = focused ? 'home' : 'home-outline';
@@ -37,7 +37,13 @@ const HomeTabs: React.FC = () => (
         } else if (route.name === 'Settings') {
           iconName = focused ? 'settings' : 'settings-outline';
         }
-        return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+        return (
+          <MaterialCommunityIcons
+            name={iconName as keyof typeof MaterialCommunityIcons.glyphMap}
+            size={size}
+            color={color}
+          />
+        );
       },
       tabBarActiveTintColor: 'tomato',
       tabBarInactiveTintColor: 'gray',
@@ -58,7 +64,7 @@ const AppNavigator: React.FC = () => (
         <Stack.Screen
           name='HomeTabs'
           component={HomeTabs}
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
         />
       </Stack.Navigator>
     </SessionProvider>
