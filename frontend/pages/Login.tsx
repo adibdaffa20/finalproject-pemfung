@@ -1,17 +1,17 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   StyleSheet,
-  Alert,
   Image,
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useSession} from '../SessionContext';
-import {RootStackParamList} from '../AppNavigator';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSession } from '../SessionContext';
+import { RootStackParamList } from '../AppNavigator';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -27,42 +27,48 @@ interface LoginResponse {
   error?: string;
 }
 
-const Login: React.FC<Props> = ({navigation}) => {
+const Login: React.FC<Props> = ({ navigation }) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [statusMessage, setStatusMessage] = useState<string>(''); // New state for status messages
+  const [error, setError] = useState<string>(''); // New state for error messages
 
-  const {login} = useSession();
+  const { login } = useSession();
 
   const handleLogin = async () => {
     if (!username || !password) {
-      setStatusMessage('Please fill in all fields'); // Update status message instead of alert
+      setStatusMessage('Please fill in all fields');
       return;
     }
 
     setLoading(true);
-    setStatusMessage(''); // Clear status message before attempting to log in
+    setStatusMessage('');
+    setError('');
+
     try {
       const response = await fetch('http://127.0.0.1:5000/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({username, password}),
+        body: JSON.stringify({ username, password }),
       });
+
       const json = (await response.json()) as LoginResponse;
+
       if (response.status === 200) {
         setStatusMessage('Login successful. Redirecting...');
+        await AsyncStorage.setItem('username', username);
         setTimeout(() => {
           login(username);
           navigation.replace('HomeTabs');
-        }, 2000); // Delay to show status message before redirect
+        }, 2000);
       } else {
-        setStatusMessage(json.error || 'Login failed. Unknown error.'); // Show error in status message
+        setError(json.error || 'Login failed. Unknown error.');
       }
     } catch (error) {
-      setStatusMessage('Unable to connect to server'); // Use status message for server errors
+      setError('Unable to connect to server');
     } finally {
       setLoading(false);
     }
@@ -71,19 +77,21 @@ const Login: React.FC<Props> = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/taskify.png')} style={styles.logo} />
-      <Text style={styles.statusMessage}>{statusMessage}</Text>{' '}
-      {/* Display the status message */}
+      {statusMessage ? (
+        <Text style={styles.statusMessage}>{statusMessage}</Text>
+      ) : null}
+      {error ? <Text style={styles.errorMessage}>{error}</Text> : null}
       <Text style={styles.title}>Welcome Back</Text>
       <TextInput
         style={styles.input}
-        placeholder='Username'
+        placeholder="Username"
         value={username}
         onChangeText={setUsername}
-        autoCapitalize='none'
+        autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
-        placeholder='Password'
+        placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -94,7 +102,7 @@ const Login: React.FC<Props> = ({navigation}) => {
         disabled={loading}
       >
         {loading ? (
-          <ActivityIndicator color='#fff' />
+          <ActivityIndicator color="#fff" />
         ) : (
           <Text style={styles.buttonText}>Login</Text>
         )}
@@ -115,7 +123,13 @@ const Login: React.FC<Props> = ({navigation}) => {
 const styles = StyleSheet.create({
   statusMessage: {
     fontSize: 16,
-    color: 'red', // Choose a color that suits your UI theme
+    color: 'green',
+    textAlign: 'center',
+    paddingVertical: 10,
+  },
+  errorMessage: {
+    fontSize: 16,
+    color: 'red',
     textAlign: 'center',
     paddingVertical: 10,
   },
