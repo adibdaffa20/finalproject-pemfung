@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../AppNavigator';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../AppNavigator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type SignUpScreenNavigationProp = NativeStackNavigationProp<
@@ -27,7 +27,7 @@ interface SignUpResponse {
   error?: string;
 }
 
-const SignUp: React.FC<Props> = ({ navigation }) => {
+const SignUp: React.FC<Props> = ({navigation}) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [nickname, setNickname] = useState<string>(''); // Tambahkan state untuk nama panggilan
@@ -42,13 +42,14 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
 
     setLoading(true);
     setStatusMessage('');
+    console.log(JSON.stringify({username, password, name: nickname}));
     try {
       const response = await fetch('http://127.0.0.1:5000/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password, nickname }),
+        body: JSON.stringify({username, password, name: nickname}),
       });
       const json = (await response.json()) as SignUpResponse;
       if (response.status === 200 || response.status === 201) {
@@ -78,20 +79,20 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
       <Text style={styles.title}>Create Your Account</Text>
       <TextInput
         style={styles.input}
-        placeholder="Nama Panggilan"
+        placeholder='Nama Panggilan'
         value={nickname}
         onChangeText={setNickname}
       />
       <TextInput
         style={styles.input}
-        placeholder="Username"
+        placeholder='Username'
         value={username}
         onChangeText={setUsername}
-        autoCapitalize="none"
+        autoCapitalize='none'
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder='Password'
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -102,7 +103,7 @@ const SignUp: React.FC<Props> = ({ navigation }) => {
         disabled={loading}
       >
         {loading ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color='#fff' />
         ) : (
           <Text style={styles.buttonText}>Sign Up</Text>
         )}

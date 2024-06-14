@@ -37,6 +37,7 @@ def login():
 def register():
     username = request.json.get('username')
     password = request.json.get('password')
+    name = request.json.get('name')
     if not username or not password:
         return jsonify({'error': 'Username and password are required'}), 400
 
@@ -47,6 +48,7 @@ def register():
     # Create new account and hash the password
     new_account = Account(username=username)
     new_account.set_password(password)
+    new_account.name = name
     db.session.add(new_account)
     db.session.commit()
 
@@ -57,6 +59,22 @@ def register():
 def logout():
     session.pop('user_id', None)
     return jsonify({'message': 'Logged out successfully'}), 200
+
+
+@api_blueprint.route('/tugas-all', methods=['GET'])
+def get_all_tugas():
+    tugas_list = Tugas.query.all()
+    data = [
+        {
+            "id": tugas.id,
+            "nama": tugas.nama,
+            "deskripsi": tugas.deskripsi,
+            "deadline": tugas.deadline,
+            "kategori": tugas.kategori,
+            "is_done": tugas.is_done
+        } for tugas in tugas_list
+    ]
+    return jsonify({"message": "All Tugas retrieved successfully", "data": data}), 200
 
 
 @api_blueprint.route('/tugas', methods=['POST'])
@@ -71,7 +89,17 @@ def add_tugas():
     )
     db.session.add(new_tugas)
     db.session.commit()
-    return jsonify({"message": "Tugas added successfully"}), 201
+    return jsonify({
+        "message": "Tugas added successfully",
+        "data": {
+            "id": new_tugas.id,
+            "nama": new_tugas.nama,
+            "deskripsi": new_tugas.deskripsi,
+            "deadline": new_tugas.deadline,
+            "kategori": new_tugas.kategori,
+            "is_done": new_tugas.is_done
+        }
+    }), 201
 
 
 @api_blueprint.route('/tugas/<int:tugas_id>', methods=['DELETE'])

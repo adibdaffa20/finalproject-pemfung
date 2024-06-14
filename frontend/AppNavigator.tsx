@@ -16,6 +16,7 @@ export type RootStackParamList = {
   SignUp: undefined;
   HomeTabs: undefined;
   TaskDetail: undefined;
+  MyCourse: undefined;
 };
 
 type HomeTabParamList = {
@@ -63,7 +64,7 @@ const AppNavigator: React.FC = () => (
       <Stack.Navigator initialRouteName='HomeTabs'>
         <Stack.Screen name='Login' component={Login} />
         <Stack.Screen name='SignUp' component={SignUp} />
-        <Stack.Screen name="TaskDetail" component={TaskDetail} />
+        <Stack.Screen name='TaskDetail' component={TaskDetail} />
         <Stack.Screen
           name='HomeTabs'
           component={HomeTabs}
